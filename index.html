@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nivito Stages & Domains</title>
+<style>
+/* Base styles */
+html { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit; }
+body {
+  background-color: #000d1a; color: #f0f0f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; margin: 0; line-height: 1.5;
+}
+a { text-decoration: none; color: inherit; }
+
+/* --- STAGES STYLES --- */
+.stages-container {
+  background: linear-gradient(#001a33, #000d1a);
+  padding: 2rem; padding-bottom: calc(2rem + 20px); padding-top: calc(2rem + 30px);
+  color: white; display: flex; overflow-x: auto; overflow-y: visible; align-items: flex-start; /* Align tops */
+  border-bottom: 1px solid rgba(127,255,212,0.2); margin-bottom: 2rem; position: relative; gap: 1.5rem;
+  -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: #7fffd4 rgba(0,0,0,0.1);
+}
+.stages-container::-webkit-scrollbar { height: 8px; }
+.stages-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 4px; }
+.stages-container::-webkit-scrollbar-thumb { background-color: #7fffd4; border-radius: 4px; }
+
+/* Stage Wrapper Style (for current stage) */
+.stage-wrapper {
+  position: relative; flex-shrink: 0; display: flex; align-items: flex-start; padding-top: 30px;
+}
+
+/* Arrow Indicator Styles */
+.current-stage-arrow {
+  position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; z-index: 10; pointer-events: none;
+}
+.current-stage-arrow svg { width: 100%; height: 100%; display: block; }
+.current-stage-arrow svg path { stroke: white; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+
+/* Base Stage Item Styles */
+.stage-item {
+  padding: 1.2rem; border: 2px solid currentColor; border-radius: 8px; transition: all 0.3s ease;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem;
+  min-width: 200px; background: rgba(0,0,0,0.2); cursor: pointer; flex-shrink: 0;
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* === DEFAULT ACTIVE/INACTIVE STATES === */
+
+/* Default styles for stages 1, 3, 4, 5, 6 (GRAYED OUT) */
+.stages-container > .stage-item:first-child,
+.stages-container > .stage-item:nth-child(n+3):nth-child(-n+6) {
+  opacity: 0.4;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  transform: translateY(0);
+}
+/* Specific widths for stages with details */
+.stages-container > .stage-item:first-child { min-width: 230px; color: #7fffd4; }
+.stages-container > .stage-item:nth-child(3) { min-width: 210px; color: #fffacd; }
+.stages-container > .stage-item:nth-child(4) { min-width: 210px; color: #ffd700; }
+.stages-container > .stage-item:nth-child(5) { min-width: 210px; color: #ffa07a; }
+/* Color for stage 6 (no details yet) */
+.stages-container > .stage-item:nth-child(6) { color: #dda0dd; }
+
+
+/* Default styles for the current stage item (Stage 2) (ACTIVE/LIFTED/GLOW) */
+.current-stage { transform: translateY(-12px); }
+.current-stage .stage-item {
+  transform: translateY(0);
+  box-shadow: 0 10px 22px -4px currentColor;
+  color: #98fb98;
+  opacity: 1;
+  min-width: 220px; /* Slightly increased width for details */
+}
+
+/* === END DEFAULT STATES === */
+
+
+/* Wrapper for number and title */
+.stage-header {
+    display: flex; align-items: center; gap: 1rem; width: 100%;
+}
+
+.stage-number {
+  background: rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-weight: bold;
+  border: 2px solid currentColor; transition: inherit; flex-shrink: 0;
+}
+.stage-text {
+  font-size: 1.1rem; letter-spacing: 0.5px; white-space: nowrap; transition: inherit; margin: 0;
+}
+.stage-details {
+    font-size: 0.8rem; line-height: 1.4; color: rgba(255, 255, 255, 0.8);
+    padding-left: 0; margin-top: 0.5rem; width: 100%;
+}
+.stage-details p { margin: 0.1rem 0; }
+/* NEW: Style for detail headings */
+.detail-heading {
+    font-weight: bold;
+    text-transform: uppercase; /* Make text uppercase */
+    padding-bottom: 5px;
+}
+
+
+/* === HOVER STATES === */
+
+/* Hover for stages 1, 3, 4, 5, 6 (make them bright/active) */
+.stages-container > .stage-item:first-child:hover,
+.stages-container > .stage-item:nth-child(n+3):nth-child(-n+6):hover {
+  opacity: 1;
+  border-color: white;
+  box-shadow: 0 10px 25px -3px currentColor;
+  transform: translateY(-8px) scale(1.05) !important;
+  z-index: 2;
+}
+
+/* Specific Hover for the current stage item (Stage 2) */
+.current-stage .stage-item:hover {
+  border-color: white;
+  box-shadow: 0 12px 28px -2px currentColor;
+  transform: translateY(0) scale(1.08) !important;
+  z-index: 2;
+}
+/* Hover lift for current stage wrapper */
+.current-stage:hover { transform: translateY(-20px); }
+
+/* === END HOVER STATES === */
+
+
+/* --- DOMAINS STYLES --- */
+/* (Domain styles remain unchanged) */
+.domains-container {
+   margin-top: 20px; padding: 0 2rem 2rem 2rem;
+}
+.domain-region { margin-bottom: 2.5rem; }
+.region-headline {
+  color: #7fffd4; border-bottom: 2px solid rgba(127,255,212,0.3); padding-bottom: 0.5rem; margin-bottom: 1.5rem; font-size: 1.6rem; font-weight: 300; letter-spacing: 1px;
+}
+.domain-list {
+  display: flex; flex-wrap: wrap; gap: 1rem; justify-content: flex-start; padding: 0; margin: 0;
+}
+.domain-item {
+  display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.4rem; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(127,255,212,0.1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; min-width: 180px; text-decoration: none; cursor: pointer; background: linear-gradient(135deg, #001a33 0%, #000d1a 100%); box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.domain-item:hover {
+  background: rgba(127,255,212,0.05); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(127,255,212,0.25); border-color: #7fffd4;
+}
+.domain-badge {
+  width: 36px; height: 36px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0; position: relative; overflow: hidden; box-sizing: border-box; text-align: center;
+}
+.domain-badge span {
+    position: relative; z-index: 5; display: inline-block; line-height: normal; vertical-align: middle;
+}
+.domain-content {
+  display: flex; flex-direction: column; overflow: hidden; min-width: 0;
+}
+.domain-url {
+  font-size: 0.9rem; color: #7fffd4; font-weight: 500; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.domain-country {
+  font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem; white-space: nowrap;
+}
+.flag-AT { background: #EF3340; color: white; }
+.flag-BE { background: linear-gradient(to right, #000000 33%, #FDDA24 33%, #FDDA24 66%, #EF3340 66%); color:#333; }
+.flag-CH { background: #FF0000; color: white; }
+.flag-CZ { background: linear-gradient(to bottom, white 50%, #D7141A 50%); color: black; border-left: 18px solid #11457E; }
+.flag-DE { background: linear-gradient(to bottom, #000000 33%, #DD0000 33%, #DD0000 66%, #FFCE00 66%); color: white; text-shadow: 1px 1px 1px #000; }
+.flag-DK { background: #C60C30; color: black; }
+.flag-DK::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 15%; background: white; z-index: 1;}
+.flag-DK::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 20%; background: white; z-index: 1;}
+.flag-FR { background: linear-gradient(to right, #0055A4 33%, #FFFFFF 33%, #FFFFFF 66%, #EF4135 66%); color: #333; }
+.flag-HU { background: linear-gradient(to bottom, #CD2A3E 33%, #FFFFFF 33%, #FFFFFF 66%, #436F4D 66%); color: #333; }
+.flag-IE { background: linear-gradient(to right, #169B62 33%, #FFFFFF 33%, #FFFFFF 66%, #FF883E 66%); color: #333; }
+.flag-IT { background: linear-gradient(to right, #009246 33%, #FFFFFF 33%, #FFFFFF 66%, #CE2B37 66%); color: #333; }
+.flag-LT { background: linear-gradient(to bottom, #FDB913 33%, #006A44 33%, #006A44 66%, #C1272D 66%); color: white; text-shadow: 1px 1px 1px #000;}
+.flag-NL { background: linear-gradient(to bottom, #AE1C28 33%, #FFFFFF 33%, #FFFFFF 66%, #21468B 66%); color: #333; }
+.flag-NO { background: #EF2B2D; }
+.flag-NO::before { content: ''; position: absolute; top: 0; bottom: 0; left: 30%; background: white; width: 20%; z-index: 1;}
+.flag-NO::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); background: white; height: 25%; z-index: 1;}
+.flag-NO > .blue-cross-v { position: absolute; top: 0; bottom: 0; left: 35%; background: #00205B; width: 10%; z-index: 2;}
+.flag-NO > .blue-cross-h { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); background: #00205B; height: 15%; z-index: 2;}
+.flag-PL { background: linear-gradient(to bottom, #FFFFFF 50%, #DC143C 50%); color: #333; }
+.flag-PT { background: linear-gradient(to right, #046A38 40%, #DA291C 40%); }
+.flag-SE { background: #005BAC; }
+.flag-SE::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 15%; background: #FFCD00; z-index: 1;}
+.flag-SE::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 20%; background: #FFCD00; z-index: 1;}
+.flag-SK { background: linear-gradient(to bottom, #FFFFFF 33%, #0B4EA2 33%, #0B4EA2 66%, #EE1C25 66%); color: #333; }
+.flag-UK { background: #012169; }
+.flag-UK::before { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 20%; background: white; z-index: 1; }
+.flag-UK::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 20%; background: white; z-index: 1; }
+.flag-UK > .red-cross-v { position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 12%; background: #C8102E; z-index: 2;}
+.flag-UK > .red-cross-h { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 12%; background: #C8102E; z-index: 2;}
+.flag-COM { background: #000000; color: white; border: 2px solid #000000; }
+.flag-CA { background: linear-gradient(to right, #FF0000 25%, #FFFFFF 25%, #FFFFFF 75%, #FF0000 75%); color: #D8262F;}
+.flag-MX { background: linear-gradient(to right, #006847 33%, #FFFFFF 33%, #FFFFFF 66%, #CE1126 66%); color: #333; }
+.flag-BR { background: #009C3B; color: #FFDF00; }
+.flag-AE { background: linear-gradient(to right, #000000 25%, #00732F 25%, #00732F 50%, #FFFFFF 50%, #FFFFFF 75%, #EF3340 75%); color: white; text-shadow: 1px 1px 1px #333; }
+.flag-QA { background: #8D1B3D; color: white; }
+.flag-TR { background: #E30A17; color: white; }
+.flag-IN { background: linear-gradient(to bottom, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%); color: #000080; }
+.flag-AU { background: #00008B; color: white; }
+.flag-HK { background: #DA291C; color: white; }
+.flag-TW { background: #FE0000; color: white; }
+.flag-JP { background: #FFFFFF; color: #BC002D; border: 1px solid #eee; }
+.flag-GR { background: #0D5EAF; color: white; }
+.flag-BE span, .flag-FR span, .flag-HU span, .flag-IE span,
+.flag-IT span, .flag-NL span, .flag-PL span, .flag-SK span,
+.flag-MX span { color: #333;}
+.flag-DE span, .flag-LT span, .flag-AE span,
+.flag-QA span, .flag-TR span, .flag-HK span,
+.flag-TW span, .flag-GR span, .flag-AT span,
+.flag-CH span { color: white;}
+.flag-DK span { color: black !important; }
+.flag-CZ span { color: black !important; }
+.flag-BR span { color: #FFDF00; }
+.flag-JP span { color: #BC002D; }
+.flag-IN span { color: #000080; }
+.flag-CA span { color: #D8262F; }
+.flag-COM span { color: white !important; }
+.flag-AU span { color: white !important; }
+
+/* --- RESPONSIVE STYLES --- */
+@media (max-width: 768px) {
+  .stages-container {
+    padding: 1rem; padding-bottom: calc(1rem + 20px); padding-top: calc(1rem + 30px); gap: 1rem;
+  }
+  .stage-wrapper { margin: 0 0.5rem; padding-top: 25px; }
+  .current-stage-arrow { width: 30px; height: 30px; top: -20px; }
+   .current-stage-arrow svg path { stroke-width: 4; }
+  .stage-item { padding: 0.8rem 1rem; min-width: 160px; gap: 0.6rem; }
+  /* Default grayed state for stages 1, 3-6 on mobile */
+  .stages-container > .stage-item:first-child,
+  .stages-container > .stage-item:nth-child(n+3):nth-child(-n+6) {
+      opacity: 0.4; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transform: translateY(0);
+  }
+  .stages-container > .stage-item:first-child { min-width: 180px; }
+  .stages-container > .stage-item:nth-child(3) { min-width: 170px; }
+  .stages-container > .stage-item:nth-child(4) { min-width: 170px; }
+  .stages-container > .stage-item:nth-child(5) { min-width: 170px; }
+
+  /* Current stage (Stage 2) lift on mobile */
+  .current-stage { transform: translateY(-8px); }
+  .current-stage .stage-item {
+     transform: translateY(0); box-shadow: 0 8px 18px -4px currentColor; opacity: 1; min-width: 170px;
+  }
+  .stage-number { width: 28px; height: 28px; font-size: 0.9rem; }
+  .stage-text { font-size: 0.95rem; }
+   .stage-details { font-size: 0.7rem; line-height: 1.3; margin-top: 0.3rem;}
+   .stage-details p { margin: 0.05rem 0; }
+
+  .domains-container { padding: 0 1rem 1rem 1rem; }
+  .region-headline { font-size: 1.4rem; }
+  .domain-list { gap: 0.8rem; justify-content: center; }
+  .domain-item { min-width: 150px; padding: 0.6rem 1rem; gap: 0.6rem; flex-basis: calc(50% - 1rem); flex-grow: 1; }
+  .domain-badge { width: 32px; height: 32px; font-size: 0.8rem; }
+  .domain-url { font-size: 0.85rem; }
+  .domain-country { font-size: 0.7rem; }
+}
+
+@media (max-width: 480px) {
+  .stages-container {
+     gap: 0.5rem; padding: 0.5rem; padding-bottom: calc(0.5rem + 15px); padding-top: calc(0.5rem + 25px);
+  }
+   .stage-wrapper { margin: 0 0.25rem; }
+   .stage-item { min-width: 140px; padding: 0.6rem 0.8rem; }
+    .stages-container > .stage-item:first-child { min-width: 160px; }
+    .stages-container > .stage-item:nth-child(3) { min-width: 150px; }
+    .stages-container > .stage-item:nth-child(4) { min-width: 150px; }
+    .stages-container > .stage-item:nth-child(5) { min-width: 150px; }
+    .current-stage .stage-item { min-width: 150px; }
+   .stage-text { font-size: 0.85rem; }
+   .stage-details { font-size: 0.65rem;}
+
+   .domain-item { flex-basis: 100%; min-width: unset; }
+   .region-headline { font-size: 1.3rem; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Stages Section -->
+<div class="stages-container">
+  <!-- Stage 1 -->
+  <div class="stage-item">
+    <div class="stage-header">
+        <div class="stage-number">1</div>
+        <div class="stage-text">Pre-Seed Stage</div>
+    </div>
+    <div class="stage-details">
+        <p class="detail-heading">Private capital</p>
+        <p>Trademark world wide</p>
+        <p>30 Websites World Wide</p>
+        <p>30 Domains World Wide</p>
+        <p>EU and China Patents</p>
+        <p>Social Media Presence</p>
+        <p>China Production</p>
+        <p>Italy Production</p>
+        <p>Global Advanced SEO</p>
+        <p>Proof of Concept (POC)</p>
+        <p>Market Validation</p>
+        <p>Viability Assessment</p>
+        <p>Iterative Testing</p>
+    </div>
+  </div>
+
+  <!-- Stage 2 Wrapper (Current Stage) -->
+  <div class="stage-wrapper current-stage">
+    <div class="current-stage-arrow">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 8 L12 16 L20 8" />
+      </svg>
+    </div>
+    <div class="stage-item">
+       <div class="stage-header">
+            <div class="stage-number">2</div>
+            <div class="stage-text">Seed Stage</div>
+       </div>
+       <div class="stage-details">
+           <p class="detail-heading">External Financing</p>
+           <p>Max €300 thousand EUR</p>
+           <p>Scaling Production</p>
+           <p>Production Cost Efficiency</p>
+           <p>Initial Marketing Push</p>
+           <p>Team Expansion</p>
+           <p>AI Support Agents</p>
+           <p>AI Social Posting Agents</p>
+           <p>AI Image to Video Agents</p>
+           <p>COGS</p>
+       </div>
+    </div>
+  </div>
+
+  <!-- Stage 3 -->
+  <div class="stage-item">
+     <div class="stage-header">
+        <div class="stage-number">3</div>
+        <div class="stage-text">Early Stage</div>
+     </div>
+     <div class="stage-details">
+         <p class="detail-heading">External Financing</p>
+         <p>€1 million to €5 million</p>
+     </div>
+  </div>
+  <!-- Stage 4 -->
+  <div class="stage-item">
+    <div class="stage-header">
+        <div class="stage-number">4</div>
+        <div class="stage-text">Growth Stage</div>
+    </div>
+    <div class="stage-details">
+        <p class="detail-heading">External Financing</p>
+        <p>€5 million to €10 million</p>
+    </div>
+  </div>
+  <!-- Stage 5 -->
+  <div class="stage-item">
+    <div class="stage-header">
+        <div class="stage-number">5</div>
+        <div class="stage-text">Expansion Stage</div>
+    </div>
+     <div class="stage-details">
+        <p class="detail-heading">External Financing</p>
+        <p>€10 million to €50 million</p>
+    </div>
+  </div>
+  <!-- Stage 6 -->
+  <div class="stage-item">
+    <div class="stage-header">
+        <div class="stage-number">6</div>
+        <div class="stage-text">Exit Stage</div>
+    </div>
+     <!-- No details added for Exit Stage -->
+  </div>
+</div>
+
+<!-- Domains Section -->
+<div class="domains-container">
+
+  <!-- Americas -->
+  <section class="domain-region">
+    <h2 class="region-headline">America</h2>
+    <div class="domain-list">
+        <!-- 1. USA -->
+        <a href="https://nivito.com" class="domain-item" target="_blank">
+          <div class="domain-badge flag-COM"><span>COM</span></div>
+          <div class="domain-content">
+            <div class="domain-url">nivito.com</div>
+            <div class="domain-country">Global / USA</div>
+          </div>
+        </a>
+        <!-- 2. Brazil -->
+        <a href="https://nivito.com.br" class="domain-item" target="_blank">
+          <div class="domain-badge flag-BR"><span>BR</span></div>
+          <div class="domain-content">
+            <div class="domain-url">nivito.com.br</div>
+            <div class="domain-country">Brazil</div>
+          </div>
+        </a>
+        <!-- 3. Canada -->
+        <a href="https://nivito.ca" class="domain-item" target="_blank">
+          <div class="domain-badge flag-CA"><span>CA</span></div>
+          <div class="domain-content">
+            <div class="domain-url">nivito.ca</div>
+            <div class="domain-country">Canada</div>
+          </div>
+        </a>
+        <!-- 4. Mexico -->
+        <a href="https://nivito.mx" class="domain-item" target="_blank">
+          <div class="domain-badge flag-MX"><span>MX</span></div>
+          <div class="domain-content">
+            <div class="domain-url">nivito.mx</div>
+            <div class="domain-country">Mexico</div>
+          </div>
+        </a>
+    </div>
+  </section>
+
+  <!-- Europe -->
+  <section class="domain-region">
+    <h2 class="region-headline">Europe</h2>
+    <div class="domain-list">
+        <!-- 1. Germany -->
+        <a href="https://nivito.de" class="domain-item" target="_blank">
+            <div class="domain-badge flag-DE"><span>DE</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.de</div>
+            <div class="domain-country">Germany</div>
+            </div>
+        </a>
+        <!-- 2. United Kingdom -->
+        <a href="https://nivito.co.uk" class="domain-item" target="_blank">
+            <div class="domain-badge flag-UK">
+                <div class="red-cross-v"></div>
+                <div class="red-cross-h"></div>
+            </div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.co.uk</div>
+            <div class="domain-country">United Kingdom</div>
+            </div>
+        </a>
+        <!-- 3. France -->
+        <a href="https://nivito.fr" class="domain-item" target="_blank">
+            <div class="domain-badge flag-FR"><span>FR</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.fr</div>
+            <div class="domain-country">France</div>
+            </div>
+        </a>
+        <!-- 4. Italy -->
+        <a href="https://nivito.it" class="domain-item" target="_blank">
+            <div class="domain-badge flag-IT"><span>IT</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.it</div>
+            <div class="domain-country">Italy</div>
+            </div>
+        </a>
+        <!-- 5. Switzerland -->
+        <a href="https://nivito.ch" class="domain-item" target="_blank">
+            <div class="domain-badge flag-CH"><span>CH</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.ch</div>
+            <div class="domain-country">Switzerland</div>
+            </div>
+        </a>
+        <!-- 6. Netherlands -->
+        <a href="https://nivito.nl" class="domain-item" target="_blank">
+            <div class="domain-badge flag-NL"><span>NL</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.nl</div>
+            <div class="domain-country">Netherlands</div>
+            </div>
+        </a>
+        <!-- 7. Sweden -->
+        <a href="https://nivito.se" class="domain-item" target="_blank">
+            <div class="domain-badge flag-SE"></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.se</div>
+            <div class="domain-country">Sweden</div>
+            </div>
+        </a>
+        <!-- 8. Poland -->
+        <a href="https://nivito.pl" class="domain-item" target="_blank">
+            <div class="domain-badge flag-PL"><span>PL</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.pl</div>
+            <div class="domain-country">Poland</div>
+            </div>
+        </a>
+        <!-- 9. Belgium -->
+        <a href="https://nivito.be" class="domain-item" target="_blank">
+            <div class="domain-badge flag-BE"><span>BE</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.be</div>
+            <div class="domain-country">Belgium</div>
+            </div>
+        </a>
+        <!-- 10. Austria -->
+        <a href="https://nivito.at" class="domain-item" target="_blank">
+            <div class="domain-badge flag-AT"><span>AT</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.at</div>
+            <div class="domain-country">Austria</div>
+            </div>
+        </a>
+        <!-- 11. Norway -->
+        <a href="https://nivito.no" class="domain-item" target="_blank">
+            <div class="domain-badge flag-NO">
+                <div class="blue-cross-v"></div>
+                <div class="blue-cross-h"></div>
+            </div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.no</div>
+            <div class="domain-country">Norway</div>
+            </div>
+        </a>
+        <!-- 12. Ireland -->
+        <a href="https://nivito.ie" class="domain-item" target="_blank">
+            <div class="domain-badge flag-IE"><span>IE</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.ie</div>
+            <div class="domain-country">Ireland</div>
+            </div>
+        </a>
+        <!-- 13. Denmark -->
+        <a href="https://nivito.dk" class="domain-item" target="_blank">
+            <div class="domain-badge flag-DK"><span>DK</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.dk</div>
+            <div class="domain-country">Denmark</div>
+            </div>
+        </a>
+        <!-- 14. Czech Republic -->
+        <a href="https://nivito.cz" class="domain-item" target="_blank">
+            <div class="domain-badge flag-CZ"><span>CZ</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.cz</div>
+            <div class="domain-country">Czech Republic</div>
+            </div>
+        </a>
+        <!-- 15. Portugal -->
+        <a href="https://nivito.pt" class="domain-item" target="_blank">
+            <div class="domain-badge flag-PT"></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.pt</div>
+            <div class="domain-country">Portugal</div>
+            </div>
+        </a>
+        <!-- 16. Greece -->
+        <a href="https://nivito.com.gr" class="domain-item" target="_blank">
+            <div class="domain-badge flag-GR"><span>GR</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.com.gr</div>
+            <div class="domain-country">Greece</div>
+            </div>
+        </a>
+        <!-- 17. Hungary -->
+        <a href="https://nivito.hu" class="domain-item" target="_blank">
+            <div class="domain-badge flag-HU"><span>HU</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.hu</div>
+            <div class="domain-country">Hungary</div>
+            </div>
+        </a>
+        <!-- 18. Slovakia -->
+        <a href="https://nivito.sk" class="domain-item" target="_blank">
+            <div class="domain-badge flag-SK"><span>SK</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.sk</div>
+            <div class="domain-country">Slovakia</div>
+            </div>
+        </a>
+        <!-- 19. Lithuania -->
+        <a href="https://nivito.lt" class="domain-item" target="_blank">
+            <div class="domain-badge flag-LT"><span>LT</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.lt</div>
+            <div class="domain-country">Lithuania</div>
+            </div>
+        </a>
+    </div>
+  </section>
+
+  <!-- Middle East -->
+   <section class="domain-region">
+    <h2 class="region-headline">Middle East</h2>
+    <div class="domain-list">
+        <!-- 1. Turkey -->
+        <a href="https://nivito.com.tr" class="domain-item" target="_blank">
+            <div class="domain-badge flag-TR"><span>TR</span></div>
+            <div class="domain-content">
+                <div class="domain-url">nivito.com.tr</div>
+                <div class="domain-country">Turkey</div>
+            </div>
+        </a>
+        <!-- 2. UAE -->
+       <a href="https://nivito.ae" class="domain-item" target="_blank">
+          <div class="domain-badge flag-AE"><span>AE</span></div>
+          <div class="domain-content">
+            <div class="domain-url">nivito.ae</div>
+            <div class="domain-country">UAE</div>
+          </div>
+        </a>
+        <!-- 3. Qatar -->
+        <a href="https://nivito.qa" class="domain-item" target="_blank">
+          <div class="domain-badge flag-QA"><span>QA</span></div>
+          <div class="domain-content">
+            <div class="domain-url">nivito.qa</div>
+            <div class="domain-country">Qatar</div>
+          </div>
+        </a>
+    </div>
+  </section>
+
+  <!-- Asia Pacific -->
+  <section class="domain-region">
+    <h2 class="region-headline">Asia Pacific</h2>
+    <div class="domain-list">
+        <!-- 1. Japan -->
+        <a href="https://nivito.jp" class="domain-item" target="_blank">
+            <div class="domain-badge flag-JP"><span>JP</span></div>
+            <div class="domain-content">
+            <div class="domain-url">nivito.jp</div>
+            <div class="domain-country">Japan</div>
+            </div>
+        </a>
+        <!-- 2. India -->
+       <a href="https://nivito.co.in" class="domain-item" target="_blank">
+        <div class="domain-badge flag-IN"><span>IN</span></div>
+        <div class="domain-content">
+          <div class="domain-url">nivito.co.in</div>
+          <div class="domain-country">India</div>
+        </div>
+      </a>
+      <!-- 3. Australia -->
+      <a href="https://nivito.com.au" class="domain-item" target="_blank">
+        <div class="domain-badge flag-AU"><span>AU</span></div>
+        <div class="domain-content">
+          <div class="domain-url">nivito.com.au</div>
+          <div class="domain-country">Australia</div>
+        </div>
+      </a>
+      <!-- 4. Taiwan -->
+      <a href="https://nivito.com.tw" class="domain-item" target="_blank">
+        <div class="domain-badge flag-TW"><span>TW</span></div>
+        <div class="domain-content">
+          <div class="domain-url">nivito.com.tw</div>
+          <div class="domain-country">Taiwan</div>
+        </div>
+      </a>
+      <!-- 5. Hong Kong -->
+      <a href="https://nivito.com.hk" class="domain-item" target="_blank">
+        <div class="domain-badge flag-HK"><span>HK</span></div>
+        <div class="domain-content">
+          <div class="domain-url">nivito.com.hk</div>
+          <div class="domain-country">Hong Kong</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+</div> <!-- /domains-container -->
+
+</body>
+</html>
